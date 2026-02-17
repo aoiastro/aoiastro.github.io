@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 </head>
 <body>
     <div class="stars-container"></div>
@@ -36,16 +37,7 @@
                     </div>
                 </div>
                 <div class="editor-wrapper">
-                    <textarea id="code-input" spellcheck="false"># Welcome to pyaoiastro!
-import sys
-print(f"Python version: {sys.version}")
-
-# You can install pure python packages using micropip
-# Example:
-# import micropip
-# await micropip.install("snowballstemmer")
-# import snowballstemmer
-</textarea>
+                    <div id="code-editor"></div>
                 </div>
             </div>
         </section>

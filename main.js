@@ -1,4 +1,5 @@
 let pyodide;
+let editor;
 
 const statusDot = document.querySelector('.status-dot');
 const statusText = document.getElementById('pyodide-status').querySelector('.status-text');
@@ -7,7 +8,6 @@ const runBtn = document.getElementById('run-btn');
 const installBtn = document.getElementById('install-btn');
 const packageInput = document.getElementById('package-name');
 const packageStatus = document.getElementById('package-status');
-const codeInput = document.getElementById('code-input');
 const clearBtn = document.getElementById('clear-btn');
 
 function addToConsole(content, type = 'log') {
@@ -38,6 +38,29 @@ async function initPyodide() {
         addToConsole(`Initialization Error: ${err.message}`, 'error');
         statusText.textContent = 'Init Failed';
     }
+}
+
+async function initMonaco() {
+    require.confieditor.getValue();
+    runBtn.disabled = true;
+    runBtn.textContent = 'Running...';
+    
+    try {
+# You can install pure python packages using micropip
+# Example:
+# import micropip
+# await micropip.install("snowballstemmer")
+# import snowballstemmer
+`,
+            language: 'python',
+            theme: 'vs-dark',
+            fontSize: 14,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            wordWrap: 'on'
+        });
+    });
 }
 
 runBtn.addEventListener('click', async () => {
@@ -85,3 +108,5 @@ clearBtn.addEventListener('click', () => {
 
 // Start initialization
 initPyodide();
+Monaco();
+init
