@@ -50,6 +50,36 @@
                     <span id="run-meta">Last run: not yet</span>
                     <span id="save-meta">Autosave: enabled</span>
                 </div>
+                <div class="tool-grid">
+                    <div class="tool-row">
+                        <button id="run-selection-btn" class="btn secondary" disabled>Run Selection</button>
+                        <button id="format-btn" class="btn secondary">Format</button>
+                        <button id="copy-code-btn" class="btn secondary">Copy Code</button>
+                        <button id="share-btn" class="btn secondary">Share Link</button>
+                        <button id="theme-btn" class="btn secondary">Theme: Dark</button>
+                    </div>
+                    <div class="tool-row">
+                        <button id="wrap-btn" class="btn secondary">Wrap: On</button>
+                        <button id="line-btn" class="btn secondary">Line#: On</button>
+                        <label for="font-size" class="tool-label">Font</label>
+                        <input type="range" id="font-size" min="12" max="24" value="14">
+                        <span id="font-size-value" class="tool-value">14px</span>
+                    </div>
+                    <div class="tool-row">
+                        <input type="text" id="search-input" class="input-compact" placeholder="Find text">
+                        <button id="search-next-btn" class="btn secondary">Find Next</button>
+                        <button id="snapshot-save-btn" class="btn secondary">Save Snapshot</button>
+                        <button id="snapshot-load-btn" class="btn secondary">Load Snapshot</button>
+                        <button id="snapshot-clear-btn" class="btn secondary">Clear Snapshot</button>
+                    </div>
+                    <div class="tool-row">
+                        <label for="history-select" class="tool-label">History</label>
+                        <select id="history-select" class="input-compact grow">
+                            <option value="">Select previous run</option>
+                        </select>
+                        <button id="reset-runtime-btn" class="btn secondary">Reset Runtime</button>
+                    </div>
+                </div>
                 <div class="editor-wrapper">
                     <div id="code-editor"></div>
                 </div>
@@ -60,7 +90,11 @@
             <div class="glass-panel">
                 <div class="panel-header">
                     <h2>Console Output</h2>
-                    <button id="clear-btn" class="btn secondary">Clear</button>
+                    <div class="controls">
+                        <button id="copy-output-btn" class="btn secondary">Copy Output</button>
+                        <button id="download-output-btn" class="btn secondary">Download Log</button>
+                        <button id="clear-btn" class="btn secondary">Clear</button>
+                    </div>
                 </div>
                 <div id="output" class="console-output">Initializing environment...</div>
             </div>

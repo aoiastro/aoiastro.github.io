@@ -26,6 +26,16 @@ body {
     min-height: 100vh;
 }
 
+body.light {
+    --bg-dark: #ecf1ff;
+    --accent-primary: #0f4dff;
+    --accent-secondary: #0090a8;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(15, 24, 62, 0.16);
+    --text-main: #111b36;
+    --text-muted: #4b5b86;
+}
+
 .stars-container {
     position: fixed;
     top: 0;
@@ -162,6 +172,36 @@ main {
     gap: 1rem;
 }
 
+.tool-grid {
+    padding: 0.7rem 1.25rem;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.tool-row {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.tool-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.tool-value {
+    min-width: 38px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.grow {
+    flex: 1;
+}
+
 .controls {
     display: flex;
     align-items: center;
@@ -260,6 +300,10 @@ input[type="text"] {
     font-size: 0.85rem;
 }
 
+#font-size {
+    width: 130px;
+}
+
 input[type="text"]:focus,
 .input-compact:focus {
     border-color: var(--accent-primary);
@@ -335,6 +379,15 @@ input[type="text"]:focus,
     .panel-meta {
         flex-direction: column;
         gap: 0.25rem;
+    }
+
+    .tool-row {
+        align-items: flex-start;
+    }
+
+    #font-size {
+        width: 100%;
+        max-width: 250px;
     }
 
     .package-controls {
