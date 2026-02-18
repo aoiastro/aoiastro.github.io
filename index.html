@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="stars-container"></div>
-    
+
     <header>
         <div class="logo">
             <span class="logo-icon">✨</span>
@@ -32,9 +32,23 @@
             <div class="glass-panel">
                 <div class="panel-header">
                     <h2>Python Editor</h2>
-                    <div class="controls">
+                    <div class="controls controls-wrap">
+                        <select id="sample-select" class="input-compact">
+                            <option value="">Sample code</option>
+                            <option value="hello">Hello + loop</option>
+                            <option value="math">Math + list</option>
+                            <option value="plot">Matplotlib demo</option>
+                        </select>
                         <button id="run-btn" class="btn primary" disabled>Run Code</button>
+                        <button id="reset-btn" class="btn secondary">Reset</button>
+                        <button id="download-btn" class="btn secondary">Download .py</button>
+                        <label class="btn secondary file-btn" for="upload-file">Upload .py</label>
+                        <input type="file" id="upload-file" accept=".py,text/x-python" hidden>
                     </div>
+                </div>
+                <div class="panel-meta">
+                    <span id="run-meta">Last run: not yet</span>
+                    <span id="save-meta">Autosave: enabled</span>
                 </div>
                 <div class="editor-wrapper">
                     <div id="code-editor"></div>

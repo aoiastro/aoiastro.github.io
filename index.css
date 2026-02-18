@@ -8,6 +8,7 @@
     --text-muted: #a0a0a0;
     --success: #00e676;
     --error: #ff5252;
+    --info: #80d8ff;
 }
 
 * {
@@ -25,7 +26,6 @@ body {
     min-height: 100vh;
 }
 
-/* Star Background Effect */
 .stars-container {
     position: fixed;
     top: 0;
@@ -44,7 +44,7 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background-image: 
+    background-image:
         radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
         radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
@@ -136,7 +136,7 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
 }
 
 .glass-panel:hover {
@@ -149,6 +149,28 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
+}
+
+.panel-meta {
+    padding: 0.6rem 1.25rem;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.controls-wrap {
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 h2 {
@@ -157,6 +179,7 @@ h2 {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .editor-wrapper {
@@ -166,19 +189,6 @@ h2 {
     overflow: hidden;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-}
-
-textarea {
-    width: 100%;
-    height: 300px;
-    background: transparent;
-    border: none;
-    padding: 1.25rem;
-    color: #fff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
-    resize: none;
-    outline: none;
 }
 
 .console-output {
@@ -193,24 +203,39 @@ textarea {
     white-space: pre-wrap;
 }
 
+.console-log { color: var(--accent-secondary); }
+.console-error { color: var(--error); }
+.console-info { color: var(--info); }
+
 .package-controls {
     padding: 1.5rem;
     display: flex;
     gap: 1rem;
 }
 
-input[type="text"] {
-    flex-grow: 1;
+input[type="text"],
+.input-compact {
     background: rgba(0,0,0,0.2);
     border: 1px solid var(--glass-border);
     border-radius: 8px;
-    padding: 0.75rem 1rem;
     color: #fff;
     outline: none;
     transition: border-color 0.3s ease;
+    font-family: inherit;
 }
 
-input[type="text"]:focus {
+input[type="text"] {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+}
+
+.input-compact {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+input[type="text"]:focus,
+.input-compact:focus {
     border-color: var(--accent-primary);
 }
 
@@ -223,6 +248,7 @@ input[type="text"]:focus {
     transition: all 0.3s ease;
     font-family: inherit;
     font-size: 0.85rem;
+    line-height: 1;
 }
 
 .btn:disabled {
@@ -251,6 +277,11 @@ input[type="text"]:focus {
     border-color: var(--text-muted);
 }
 
+.file-btn {
+    display: inline-flex;
+    align-items: center;
+}
+
 .package-status {
     padding: 0 1.5rem 1.5rem 1.5rem;
     font-size: 0.85rem;
@@ -261,7 +292,26 @@ input[type="text"]:focus {
     main {
         grid-template-columns: 1fr;
     }
+
     .package-section {
         grid-column: span 1;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .controls-wrap {
+        justify-content: flex-start;
+    }
+
+    .panel-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .package-controls {
+        flex-direction: column;
     }
 }
