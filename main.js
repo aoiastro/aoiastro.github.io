@@ -9,6 +9,7 @@ const SAMPLE_CODE = {
 
 let pyodide;
 let editor;
+let simpleEditor;
 let saveTimer = null;
 let storageAvailable = true;
 
@@ -88,6 +89,57 @@ function updateReadyState(ready) {
     installBtn.disabled = !ready;
 }
 
+function hasEditor() {
+    return Boolean(editor || simpleEditor);
+}
+
+function getEditorCode() {
+    if (editor) {
+        return editor.getValue();
+    }
+    if (simpleEditor) {
+        return simpleEditor.value;
+    }
+    return '';
+}
+
+function setEditorCode(value) {
+    if (editor) {
+        editor.setValue(value);
+        return;
+    }
+    if (simpleEditor) {
+        simpleEditor.value = value;
+    }
+}
+
+function createFallbackEditor(initialCode, reason) {
+    const editorHost = document.getElementById('code-editor');
+    if (!editorHost) {
+        return;
+    }
+    if (editor) {
+        editor.dispose();
+        editor = null;
+    }
+    editorHost.innerHTML = '';
+    const textarea = document.createElement('textarea');
+    textarea.id = 'fallback-editor';
+    textarea.value = initialCode;
+    editorHost.appendChild(textarea);
+    textarea.addEventListener('input', () => {
+        scheduleSave(textarea.value);
+    });
+    textarea.addEventListener('keydown', (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            event.preventDefault();
+            runCode();
+        }
+    });
+    simpleEditor = textarea;
+    addToConsole(`Editor fallback active: ${reason}`, 'info');
+}
+
 async function initPyodide() {
     try {
         statusText.textContent = 'Loading Pyodide runtime...';
@@ -111,6 +163,12 @@ async function initPyodide() {
 
 async function initMonaco() {
     return new Promise((resolve) => {
+        if (typeof require !== 'function') {
+            createFallbackEditor(getInitialCode(), 'loader unavailable');
+            resolve();
+            return;
+        }
+
         require.config({
             paths: {
                 vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs'
@@ -119,16 +177,22 @@ async function initMonaco() {
 
         require(['vs/editor/editor.main'], () => {
             const editorHost = document.getElementById('code-editor');
-            editor = monaco.editor.create(document.getElementById('code-editor'), {
-                value: getInitialCode(),
-                language: 'python',
-                theme: 'vs-dark',
-                fontSize: 14,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                wordWrap: 'on'
-            });
+            try {
+                editor = monaco.editor.create(document.getElementById('code-editor'), {
+                    value: getInitialCode(),
+                    language: 'python',
+                    theme: 'vs-dark',
+                    fontSize: 14,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    wordWrap: 'on'
+                });
+            } catch (_err) {
+                createFallbackEditor(getInitialCode(), 'monaco init failed');
+                resolve();
+                return;
+            }
 
             editor.onDidChangeModelContent(() => {
                 scheduleSave(editor.getValue());
@@ -153,12 +217,15 @@ async function initMonaco() {
             window.addEventListener('resize', relayout);
 
             resolve();
+        }, () => {
+            createFallbackEditor(getInitialCode(), 'monaco load failed');
+            resolve();
         });
     });
 }
 
 async function runCode() {
-    if (!pyodide || !editor || runBtn.disabled) {
+    if (!pyodide || !hasEditor() || runBtn.disabled) {
         return;
     }
 
@@ -166,7 +233,7 @@ async function runCode() {
     runBtn.textContent = 'Running...';
 
     const startedAt = performance.now();
-    const code = editor.getValue();
+    const code = getEditorCode();
 
     try {
         saveCodeImmediate(code);
@@ -205,10 +272,10 @@ async function installPackage() {
 }
 
 function downloadCode() {
-    if (!editor) {
+    if (!hasEditor()) {
         return;
     }
-    const blob = new Blob([editor.getValue()], { type: 'text/x-python' });
+    const blob = new Blob([getEditorCode()], { type: 'text/x-python' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -221,8 +288,8 @@ function uploadCode(file) {
     const reader = new FileReader();
     reader.onload = () => {
         const text = String(reader.result || '');
-        if (editor) {
-            editor.setValue(text);
+        if (hasEditor()) {
+            setEditorCode(text);
             saveCodeImmediate(text);
             addToConsole(`Loaded file: ${file.name}`, 'info');
         }
@@ -232,19 +299,19 @@ function uploadCode(file) {
 
 function applySample(name) {
     const sample = SAMPLE_CODE[name];
-    if (!sample || !editor) {
+    if (!sample || !hasEditor()) {
         return;
     }
-    editor.setValue(sample);
+    setEditorCode(sample);
     saveCodeImmediate(sample);
     addToConsole(`Sample loaded: ${name}`, 'info');
 }
 
 function resetCode() {
-    if (!editor) {
+    if (!hasEditor()) {
         return;
     }
-    editor.setValue(DEFAULT_CODE);
+    setEditorCode(DEFAULT_CODE);
     saveCodeImmediate(DEFAULT_CODE);
     addToConsole('Editor reset to default code.', 'info');
 }

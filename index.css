@@ -198,6 +198,25 @@ h2 {
     height: 100%;
 }
 
+#code-editor .monaco-editor,
+#code-editor .overflow-guard {
+    min-height: 100% !important;
+}
+
+#fallback-editor {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 1rem;
+}
+
 .console-output {
     flex-grow: 1;
     padding: 1.25rem;
