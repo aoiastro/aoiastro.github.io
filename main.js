@@ -9,6 +9,8 @@ const SAMPLE_CODE = {
 
 let pyodide;
 let editor;
+let saveTimer = null;
+let storageAvailable = true;
 
 const statusDot = document.querySelector('.status-dot');
 const statusText = document.querySelector('#pyodide-status .status-text');
@@ -23,6 +25,7 @@ const packageInput = document.getElementById('package-name');
 const packageStatus = document.getElementById('package-status');
 const clearBtn = document.getElementById('clear-btn');
 const runMeta = document.getElementById('run-meta');
+const saveMeta = document.getElementById('save-meta');
 
 function nowTime() {
     return new Date().toLocaleTimeString('ja-JP', { hour12: false });
@@ -37,11 +40,46 @@ function addToConsole(content, type = 'log') {
 }
 
 function getInitialCode() {
-    return localStorage.getItem(STORAGE_KEY) || DEFAULT_CODE;
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        storageAvailable = true;
+        if (saveMeta) {
+            saveMeta.textContent = 'Autosave: enabled';
+        }
+        return saved || DEFAULT_CODE;
+    } catch (_err) {
+        storageAvailable = false;
+        if (saveMeta) {
+            saveMeta.textContent = 'Autosave: unavailable';
+        }
+        return DEFAULT_CODE;
+    }
 }
 
-function saveCode(value) {
-    localStorage.setItem(STORAGE_KEY, value);
+function saveCodeImmediate(value) {
+    if (!storageAvailable) {
+        return;
+    }
+    try {
+        localStorage.setItem(STORAGE_KEY, value);
+        if (saveMeta) {
+            saveMeta.textContent = `Autosave: ${nowTime()}`;
+        }
+    } catch (_err) {
+        storageAvailable = false;
+        if (saveMeta) {
+            saveMeta.textContent = 'Autosave: unavailable';
+        }
+    }
+}
+
+function scheduleSave(value) {
+    if (saveTimer) {
+        clearTimeout(saveTimer);
+    }
+    saveTimer = setTimeout(() => {
+        saveCodeImmediate(value);
+    }, 300);
 }
 
 function updateReadyState(ready) {
@@ -92,7 +130,7 @@ async function initMonaco() {
             });
 
             editor.onDidChangeModelContent(() => {
-                saveCode(editor.getValue());
+                scheduleSave(editor.getValue());
             });
 
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
@@ -116,7 +154,7 @@ async function runCode() {
     const code = editor.getValue();
 
     try {
-        saveCode(code);
+        saveCodeImmediate(code);
         addToConsole('--- execution started ---', 'info');
         await pyodide.runPythonAsync(code);
         const elapsed = Math.round(performance.now() - startedAt);
@@ -170,7 +208,7 @@ function uploadCode(file) {
         const text = String(reader.result || '');
         if (editor) {
             editor.setValue(text);
-            saveCode(text);
+            saveCodeImmediate(text);
             addToConsole(`Loaded file: ${file.name}`, 'info');
         }
     };
@@ -183,7 +221,7 @@ function applySample(name) {
         return;
     }
     editor.setValue(sample);
-    saveCode(sample);
+    saveCodeImmediate(sample);
     addToConsole(`Sample loaded: ${name}`, 'info');
 }
 
@@ -192,7 +230,7 @@ function resetCode() {
         return;
     }
     editor.setValue(DEFAULT_CODE);
-    saveCode(DEFAULT_CODE);
+    saveCodeImmediate(DEFAULT_CODE);
     addToConsole('Editor reset to default code.', 'info');
 }
 
