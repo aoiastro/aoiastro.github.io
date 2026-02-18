@@ -184,7 +184,9 @@ h2 {
 
 .editor-wrapper {
     flex-grow: 1;
-    height: 400px;
+    min-height: 460px;
+    height: 58vh;
+    max-height: 760px;
     border-radius: 8px;
     overflow: hidden;
     background: var(--glass-bg);
@@ -318,5 +320,11 @@ input[type="text"]:focus,
 
     .package-controls {
         flex-direction: column;
+    }
+
+    .editor-wrapper {
+        min-height: 360px;
+        height: 52vh;
+        max-height: 620px;
     }
 }

@@ -118,6 +118,7 @@ async function initMonaco() {
         });
 
         require(['vs/editor/editor.main'], () => {
+            const editorHost = document.getElementById('code-editor');
             editor = monaco.editor.create(document.getElementById('code-editor'), {
                 value: getInitialCode(),
                 language: 'python',
@@ -136,6 +137,20 @@ async function initMonaco() {
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
                 runCode();
             });
+
+            // Force a stable layout after first paint to avoid tiny initial editor viewport.
+            const relayout = () => {
+                if (!editorHost) {
+                    return;
+                }
+                editor.layout({
+                    width: editorHost.clientWidth,
+                    height: editorHost.clientHeight
+                });
+            };
+            requestAnimationFrame(relayout);
+            setTimeout(relayout, 120);
+            window.addEventListener('resize', relayout);
 
             resolve();
         });
